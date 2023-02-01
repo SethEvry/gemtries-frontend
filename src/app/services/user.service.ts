@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { catchError } from 'rxjs';
 import { environment } from '../environments/environment';
 import { User } from '../Models/User';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -34,23 +35,17 @@ export class UserService {
   }
 
   register(user: User) {
+    localStorage.removeItem('token');
     this.http
       .post<User | undefined>(this.url + '/register', user, {
         headers: { 'content-type': 'application/json' },
       })
       .subscribe((res) => {
         if (res) {
-          this.currentUser = res;
-          this.router.navigate(['/']);
+          this.router.navigate(['/login']);
         } else {
           alert('A user with that username already exists');
         }
       });
   }
-
-
-  setSubmitted(){
-    this.currentUser!.hasSubmitted = !this.currentUser!.hasSubmitted;
-  }
-
 }

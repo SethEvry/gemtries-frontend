@@ -11,4 +11,5 @@ export interface Gemtry {
     redRoomOne: number;
     redRoomTwo: number;
     character: Character;
+    user: User;
 }

@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { Character } from 'src/app/Models/Character';
 import { Gemtry } from 'src/app/Models/Gemtry';
 import { CharacterService } from 'src/app/services/character.service';
+import { GemtryService } from 'src/app/services/gemtry.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -24,6 +25,7 @@ export class EntryComponent implements OnInit {
   constructor(
     private userService: UserService,
     private characterService: CharacterService,
+    private gemtryService: GemtryService,
     private formBuilder: FormBuilder
   ) {}
 
@@ -169,12 +171,12 @@ export class EntryComponent implements OnInit {
               ? parseInt(gemtry.redRoomTwo) || 0
               : 0,
           character: character,
+          user: this.userService.user!
         };
         return newGemtry
       }
       );
-      console.log(gemtries);   
       this.characterForm.disable();
-      this.userService.setSubmitted();
+      this.gemtryService.saveGemtries(gemtries);
     }
 }

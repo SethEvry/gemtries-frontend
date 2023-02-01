@@ -13,11 +13,13 @@ export class AuthService {
   constructor(private http: HttpClient, private uServ: UserService, private router: Router) {}
 
   login(username: string, password: string): void {
+    localStorage.removeItem('token');
     this.http
       .post<{token:string}>(this.authUrl, { username, password }, {headers:{'content-type':'application/json'}})
       .subscribe((res) => {
         localStorage.setItem('token', res.token);
         this.uServ.getUser();
+        this.router.navigate(['/']);
       });
   }
 
