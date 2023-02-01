@@ -1,0 +1,94 @@
+<div class="container m-5">
+  <div class="row my-3">
+    <h1 class="fs-1">Gem entries</h1>
+  </div>
+  <div class="row">
+    <h2>Characters:</h2>
+    <div class="button-container my-2">
+      <button
+        mat-raised-button
+        class="mx-1"
+        color="accent"
+        [disabled]="isAdding || isRemoving"
+        (click)="startAdd()"
+      >
+        Add Character
+      </button>
+      <button
+        mat-raised-button
+        [disabled]="!cycleCharacters.length || isRemoving || isAdding"
+        color="warn"
+        class="mx-1"
+        (click)="startDelete()"
+      >
+        Delete Character
+      </button>
+    </div>
+    <!-- Add a character -->
+    <form *ngIf="isAdding" [formGroup]="addForm!" class="my-2 px-2 py-3">
+      <mat-form-field appearance="outline">
+        <mat-label>Character</mat-label>
+        <mat-select formControlName="character">
+          <mat-option>Select a character</mat-option>
+          <mat-option *ngFor="let character of characters" [value]="character"
+            >{{ character.name | titlecase }} -
+            {{ character.characterClass }}</mat-option
+          >
+        </mat-select>
+      </mat-form-field>
+      <div class="button-container">
+        <button
+          mat-raised-button
+          [disabled]="addForm!.invalid"
+          type="submit"
+          color="accent"
+          class="me-2"
+          (click)="handleAdd()"
+        >
+          Submit
+        </button>
+        <button mat-raised-button (click)="cancelAdd()" color="primary">
+          Cancel
+        </button>
+      </div>
+    </form>
+
+    <form *ngIf="isRemoving" class="my-2">
+      <mat-form-field appearance="outline" [formGroup]="removeForm!">
+        <mat-label>Character</mat-label>
+        <mat-select formControlName="character">
+          <mat-option>Select a character</mat-option>
+          <mat-option *ngFor="let char of cycleCharacters" [value]="char">{{
+            char.name | titlecase
+          }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div class="button-container">
+        <button
+          mat-raised-button
+          [disabled]="removeForm!.invalid"
+          type="submit"
+          color="warn"
+          class="me-2"
+          (click)="handleDelete()"
+        >
+          Delete
+        </button>
+        <button mat-raised-button (click)="cancelDelete()" color="primary">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+  <div class="row">
+    <form [formGroup]="characterForm">
+      <ng-container *ngFor="let character of cycleCharacters; let i = index">
+        <app-character-form-control
+          (formEvent)="refreshLocalStorage()"
+          [character]="character"
+          [form]="getCharacterForm(i)"
+        ></app-character-form-control>
+      </ng-container>
+    </form>
+  </div>
+</div>

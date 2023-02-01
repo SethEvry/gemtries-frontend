@@ -1,0 +1,41 @@
+<div class="row border-bottom my-3 pt-2">
+<form [formGroup]="form" class="d-flex align-items-center" (keyup)="handleChange()">
+    <div class="col-1">
+  <p>{{ character.name | titlecase}}: </p>
+</div>
+<div class="col">
+  <mat-form-field appearance="outline">
+    <mat-label>First Run</mat-label>
+    <input matInput type="number" formControlName="firstRun" />
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Second Run</mat-label>
+    <input matInput type="number" formControlName="secondRun" />
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Boss Rush</mat-label>
+    <mat-select formControlName="bossRush">
+      <mat-option value="0">0</mat-option>
+      <mat-option value="1">1</mat-option>
+      <mat-option value="2">2</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Red Room</mat-label>
+    <mat-select formControlName="redRoom">
+      <mat-option value="0">0</mat-option>
+      <mat-option value="1">1</mat-option>
+      <mat-option value="2">2</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field *ngIf="form.value.redRoom > 0" appearance="outline">
+    <mat-label>Red Room One</mat-label>
+    <input matInput type="number" formControlName="redRoomOne" />
+  </mat-form-field>
+  <mat-form-field *ngIf="form.value.redRoom > 1" appearance="outline">
+    <mat-label>Red Room Two</mat-label>
+    <input matInput type="number" formControlName="redRoomTwo" />
+  </mat-form-field>
+</div>
+</form>
+</div>

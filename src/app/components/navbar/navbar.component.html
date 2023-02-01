@@ -1,0 +1,36 @@
+<div>
+  <mat-toolbar>
+    <div class="logo">
+      <a routerLink="/" class="nav-link" routerLinkActive="active">Gemtries</a>
+    </div>
+    <nav class="ms-auto">
+      <ul class="nav">
+        <li class="nav-item">
+          <a
+            routerLink="/"
+            class="nav-link"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            >Profile</a
+          >
+        </li>
+        <li class="nav-item">
+          <a routerLink="/entry" class="nav-link" routerLinkActive="active"
+            >Daily Entry</a
+          >
+        </li>
+        <li class="nav-item">
+          <a routerLink="/analytics" class="nav-link" routerLinkActive="active"
+            >Analytics</a
+          >
+        </li>
+      </ul>
+    </nav>
+    <a
+      (click)="onLogout()"
+      class="logout nav-link ms-auto"
+      routerLinkActive="active"
+      >Logout</a
+    >
+  </mat-toolbar>
+</div>
