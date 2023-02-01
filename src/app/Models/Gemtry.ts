@@ -1,3 +1,4 @@
+import { Character } from "./Character";
 import { User } from "./User";
 
 export interface Gemtry {
@@ -9,5 +10,5 @@ export interface Gemtry {
     rested: number;
     redRoomOne: number;
     redRoomTwo: number;
-    user:User;
+    character: Character;
 }

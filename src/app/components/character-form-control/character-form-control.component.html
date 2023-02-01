@@ -14,7 +14,7 @@
   </mat-form-field>
   <mat-form-field appearance="outline">
     <mat-label>Boss Rush</mat-label>
-    <mat-select formControlName="bossRush">
+    <mat-select formControlName="bossRush" (valueChange)="handleChange()">
       <mat-option value="0">0</mat-option>
       <mat-option value="1">1</mat-option>
       <mat-option value="2">2</mat-option>
@@ -22,7 +22,7 @@
   </mat-form-field>
   <mat-form-field appearance="outline">
     <mat-label>Red Room</mat-label>
-    <mat-select formControlName="redRoom">
+    <mat-select formControlName="redRoom" (valueChange)="handleChange()">
       <mat-option value="0">0</mat-option>
       <mat-option value="1">1</mat-option>
       <mat-option value="2">2</mat-option>

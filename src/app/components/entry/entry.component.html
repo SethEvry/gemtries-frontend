@@ -9,14 +9,14 @@
         mat-raised-button
         class="mx-1"
         color="accent"
-        [disabled]="isAdding || isRemoving"
+        [disabled]="isAdding || isRemoving || characterForm.disabled"
         (click)="startAdd()"
       >
         Add Character
       </button>
       <button
         mat-raised-button
-        [disabled]="!cycleCharacters.length || isRemoving || isAdding"
+        [disabled]="!cycleCharacters.length || isRemoving || isAdding || characterForm.disabled"
         color="warn"
         class="mx-1"
         (click)="startDelete()"
@@ -32,7 +32,7 @@
           <mat-option>Select a character</mat-option>
           <mat-option *ngFor="let character of characters" [value]="character"
             >{{ character.name | titlecase }} -
-            {{ character.characterClass }}</mat-option
+            {{ character.itemLevel }}</mat-option
           >
         </mat-select>
       </mat-form-field>
@@ -89,6 +89,26 @@
           [form]="getCharacterForm(i)"
         ></app-character-form-control>
       </ng-container>
+      <div class="button-container">
+        <button
+          mat-raised-button
+          type="submit"
+          color="accent"
+          class="me-2"
+          (click)="handleSubmit()"
+          [disabled]="characterForm.disabled"
+        >
+          Submit
+        </button>
+        <button
+        *ngIf="characterForm.disabled"
+          mat-raised-button
+          color="primary"
+          (click)="characterForm.enable()"
+        >
+          Edit
+        </button>
+      </div>
     </form>
   </div>
 </div>

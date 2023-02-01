@@ -47,4 +47,10 @@ export class UserService {
         }
       });
   }
+
+
+  setSubmitted(){
+    this.currentUser!.hasSubmitted = !this.currentUser!.hasSubmitted;
+  }
+
 }

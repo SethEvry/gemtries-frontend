@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { Character } from 'src/app/Models/Character';
+import { Gemtry } from 'src/app/Models/Gemtry';
 import { CharacterService } from 'src/app/services/character.service';
 import { UserService } from 'src/app/services/user.service';
 
@@ -54,6 +55,10 @@ export class EntryComponent implements OnInit {
       // setTimeout(() => {
       //   this.clearLocalStorage();
       // }, nextDay.getTime()-currentDay.getTime())
+    }
+
+    if(this.userService.user?.hasSubmitted){
+      this.characterForm.disable();
     }
   }
 
@@ -114,7 +119,7 @@ export class EntryComponent implements OnInit {
     if (index >= 0) {
       this.cycleCharacters.splice(index, 1);
       chars.removeAt(index);
-      if(!chars.length){
+      if (!chars.length) {
         this.characterForm = this.formBuilder.group({
           characters: this.formBuilder.array([]),
         });
@@ -141,4 +146,35 @@ export class EntryComponent implements OnInit {
     localStorage.removeItem('currentCycle');
     localStorage.removeItem('currentForm');
   }
+
+  handleSubmit() {
+    const gemtries:Gemtry[] = this.characterForm.value.characters.map(
+      (gemtry: any, index: number) => {
+        const character = this.cycleCharacters[index];
+        const date = new Date();
+        date.setHours(date.getHours() - 6);
+        const newGemtry: Gemtry = {
+          id: 0,
+          localDate: date,
+          firstRun: gemtry.firstRun,
+          secondRun: gemtry.secondRun,
+          bossRush: parseInt(gemtry.bossRush) || 0,
+          rested: 2,
+          redRoomOne:
+            (parseInt(gemtry.redRoom) || 0) > 0
+              ? parseInt(gemtry.redRoomOne) || 0
+              : 0,
+          redRoomTwo:
+            (parseInt(gemtry.redRoom) || 0) > 1
+              ? parseInt(gemtry.redRoomTwo) || 0
+              : 0,
+          character: character,
+        };
+        return newGemtry
+      }
+      );
+      console.log(gemtries);   
+      this.characterForm.disable();
+      this.userService.setSubmitted();
+    }
 }
