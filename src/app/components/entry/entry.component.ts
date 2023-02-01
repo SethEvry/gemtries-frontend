@@ -30,18 +30,31 @@ export class EntryComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    //refresh a user's character list
     this.characterService.getCharacters();
+
+    //initialize character form
     this.characterForm = this.formBuilder.group({
       characters: this.formBuilder.array([]),
     });
+
+    //check to see if the day for the items in localstorage is today
     const date = new Date();
+
+    //get hours is -6 because new Date() sets up a local time (est) 
+    //and I want it count a new day as 6 am the next day
+    //there's better ways to do it, but this app is for me anyway
     date.setHours(date.getHours() - 6);
+
     const savedDay = localStorage.getItem('currentDay') || '';
+
     if (date.getDay().toString() == savedDay) {
+      //set current cycled characters to that from local storage
       this.cycleCharacters = localStorage.getItem('currentCycle')
         ? JSON.parse(localStorage.getItem('currentCycle') || '')
         : [];
 
+      //set formgroups of characterForm to those in localstorage
       if (localStorage.getItem('currentForm')) {
         const data = JSON.parse(localStorage.getItem('currentForm') || '');
         const chars = this.characterForm.get('characters') as FormArray;
@@ -50,16 +63,9 @@ export class EntryComponent implements OnInit {
         });
         this.characterForm.setValue(data);
       }
-
-      // const currentDay = new Date();
-      // const nextDay = new Date(currentDay.getDate()+1);
-      // nextDay.setHours(6, 0, 0, 0);
-      // setTimeout(() => {
-      //   this.clearLocalStorage();
-      // }, nextDay.getTime()-currentDay.getTime())
     }
 
-    if(this.userService.user?.hasSubmitted){
+    if (this.userService.user?.hasSubmitted) {
       this.characterForm.disable();
     }
   }
@@ -83,16 +89,22 @@ export class EntryComponent implements OnInit {
     return this.characterForm.get(['characters', index]) as FormGroup;
   }
 
+  //reveals add character form and creates formgroup
   startAdd() {
     this.isAdding = !this.isAdding;
     this.addForm = this.formBuilder.group({
       character: ['', Validators.required],
     });
   }
+
+  //cancels add character form and wipes form group
   cancelAdd() {
     this.isAdding = !this.isAdding;
     this.addForm = null;
   }
+
+  //adds character to today's cycle, creates a formgroup for them, refreshes localstorage, 
+  //then clears form to be able to add another
   handleAdd() {
     this.cycleCharacters.push(this.addForm?.value.character);
     const chars = this.characterForm.get('characters') as FormArray;
@@ -133,6 +145,7 @@ export class EntryComponent implements OnInit {
     }
   }
 
+  //create/refreshes localstorage instances of currentday, cycle, and characterForm
   refreshLocalStorage() {
     const currentDate = new Date();
     currentDate.setHours(currentDate.getHours() - 6);
@@ -149,8 +162,11 @@ export class EntryComponent implements OnInit {
     localStorage.removeItem('currentForm');
   }
 
+  //creates an array of gemtries from the characterForm and saves to database
+  //then disables the form (backend sets user.hasSubmitted to true)
+
   handleSubmit() {
-    const gemtries:Gemtry[] = this.characterForm.value.characters.map(
+    const gemtries: Gemtry[] = this.characterForm.value.characters.map(
       (gemtry: any, index: number) => {
         const character = this.cycleCharacters[index];
         const date = new Date();
@@ -171,12 +187,12 @@ export class EntryComponent implements OnInit {
               ? parseInt(gemtry.redRoomTwo) || 0
               : 0,
           character: character,
-          user: this.userService.user!
+          user: this.userService.user!,
         };
-        return newGemtry
+        return newGemtry;
       }
-      );
-      this.characterForm.disable();
-      this.gemtryService.saveGemtries(gemtries);
-    }
+    );
+    this.characterForm.disable();
+    this.gemtryService.saveGemtries(gemtries);
+  }
 }
