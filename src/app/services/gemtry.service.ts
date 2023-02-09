@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../environments/environment';
+import { Character } from '../Models/Character';
 import { Gemtry } from '../Models/Gemtry';
 import { UserService } from './user.service';
 
@@ -22,6 +23,10 @@ export class GemtryService {
     return this._dailyGemtries;
   }
 
+  getDailyGemtry(character: Character): Gemtry | null {
+    return this._dailyGemtries.find(gem => gem.character.id === character.id) || null;
+  }
+
   getGemtries() {
     this.http
       .get<Gemtry[]>(this.url, {
@@ -33,7 +38,7 @@ export class GemtryService {
   getDailies(){
     const today = new Date();
     today.setHours(today.getHours()-6);
-    this.http.get<Gemtry[]>(`${this.url}/${today.toString()}`, {
+    this.http.get<Gemtry[]>(`${this.url}/date?year=${today.getFullYear()}&month=${today.getMonth()+1}&date=${today.getDate()}`, {
       headers: { 'content-type': 'application/json' },
     }).subscribe(res => {
       this._dailyGemtries = res;
@@ -46,6 +51,7 @@ export class GemtryService {
     }).subscribe(res=> {
       this._gemtries = res;
       this.userService.getUser();
+      this.getDailies();
     })
   }
 

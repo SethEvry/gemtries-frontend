@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "prebuild": "envsubst < src/app/environments/environment.prod.ts > src/app/environments/environment.ts",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"

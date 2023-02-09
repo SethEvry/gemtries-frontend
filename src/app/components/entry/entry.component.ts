@@ -30,6 +30,9 @@ export class EntryComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+
+    //get/refresh daily gemtryies
+    this.gemtryService.getDailies();
     //refresh a user's character list
     this.characterService.getCharacters();
 
@@ -37,6 +40,18 @@ export class EntryComponent implements OnInit {
     this.characterForm = this.formBuilder.group({
       characters: this.formBuilder.array([]),
     });
+
+    //if there are entries for the day, have that populate the list instead of
+    //local storage
+
+    if(this.gemtryService.daily.length){
+      const chars = this.characterForm.get('characters') as FormArray;
+      this.gemtryService.daily.forEach(gemtry =>{
+        this.cycleCharacters.push(gemtry.character);
+        chars.push(this.createCharacter(gemtry.character))
+      })
+
+    }
 
     //check to see if the day for the items in localstorage is today
     const date = new Date();
@@ -48,7 +63,7 @@ export class EntryComponent implements OnInit {
 
     const savedDay = localStorage.getItem('currentDay') || '';
 
-    if (date.getDay().toString() == savedDay) {
+    if (date.getDay().toString() == savedDay && !this.gemtryService.daily.length) {
       //set current cycled characters to that from local storage
       this.cycleCharacters = localStorage.getItem('currentCycle')
         ? JSON.parse(localStorage.getItem('currentCycle') || '')
@@ -74,7 +89,19 @@ export class EntryComponent implements OnInit {
     return this.characterService.characters;
   }
 
-  createCharacter(): FormGroup {
+  createCharacter(character: Character): FormGroup {
+    const gemtry:Gemtry | null = this.gemtryService.getDailyGemtry(character);
+    if(gemtry){
+      let redRoom = gemtry.redRoomOne > 0 ? 1 : 0 + gemtry.redRoomTwo > 0 ? 1 : 0;
+      return this.formBuilder.group({
+        firstRun: gemtry.firstRun,
+        secondRun: gemtry.secondRun,
+        bossRush: gemtry.bossRush,
+        redRoom: redRoom,
+        redRoomOne: gemtry.redRoomOne,
+        redRoomTwo: gemtry.redRoomTwo,
+      });
+    }
     return this.formBuilder.group({
       firstRun: '',
       secondRun: '',
@@ -108,7 +135,7 @@ export class EntryComponent implements OnInit {
   handleAdd() {
     this.cycleCharacters.push(this.addForm?.value.character);
     const chars = this.characterForm.get('characters') as FormArray;
-    chars.push(this.createCharacter());
+    chars.push(this.createCharacter(this.addForm?.value.character));
     this.refreshLocalStorage();
     this.addForm = this.formBuilder.group({
       character: ['', Validators.required],
@@ -169,10 +196,11 @@ export class EntryComponent implements OnInit {
     const gemtries: Gemtry[] = this.characterForm.value.characters.map(
       (gemtry: any, index: number) => {
         const character = this.cycleCharacters[index];
+        const foundGem = this.gemtryService.getDailyGemtry(character);
         const date = new Date();
         date.setHours(date.getHours() - 6);
         const newGemtry: Gemtry = {
-          id: 0,
+          id: foundGem ? foundGem.id : 0,
           localDate: date,
           firstRun: gemtry.firstRun,
           secondRun: gemtry.secondRun,
